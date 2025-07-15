@@ -15,7 +15,68 @@ const io = socketIo(server, {
 
 app.use(cors());
 
-const EMOJIS = ['🍕', '🚗', '🐱', '🏖️', '🎉', '🤖', '💻', '🎤', '🛏️', '🎮', '👑', '🍎'];
+const EMOJIS = [
+  '🕺', '💃', '🎤', '🎸', '🎬', '🎭', '⚽', '🏀', '🎯', '🚗', '🚴', '✈️',
+  '🏖️', '🍕', '🍔', '🍎', '🍌', '🍩', '🍦', '☕', '📱', '💻', '📚', '🎮',
+  '🤖', '🐶', '🐱', '🐸', '🦄', '🦊', '🐢', '🐍', '🙈', '👑', '🧙', '🧛',
+  '🦸', '🕵️', '👮', '👨‍🍳', '👩‍🎤', '👨‍🚀', '👰', '🤡', '💪', '🤸', '🧘',
+  '🚿', '🛏️', '🏆', '🎉'
+];
+
+const EMOJI_NAMES = {
+  '🕺': 'dancer',
+  '💃': 'dancer (female)',
+  '🎤': 'singer',
+  '🎸': 'guitarist',
+  '🎬': 'movie',
+  '🎭': 'actor',
+  '⚽': 'soccer',
+  '🏀': 'basketball',
+  '🎯': 'dart',
+  '🚗': 'car',
+  '🚴': 'cyclist',
+  '✈️': 'airplane',
+  '🏖️': 'beach',
+  '🍕': 'pizza',
+  '🍔': 'burger',
+  '🍎': 'apple',
+  '🍌': 'banana',
+  '🍩': 'donut',
+  '🍦': 'ice cream',
+  '☕': 'coffee',
+  '📱': 'smartphone',
+  '💻': 'computer',
+  '📚': 'books',
+  '🎮': 'video game',
+  '🤖': 'robot',
+  '🐶': 'dog',
+  '🐱': 'cat',
+  '🐸': 'frog',
+  '🦄': 'unicorn',
+  '🦊': 'fox',
+  '🐢': 'turtle',
+  '🐍': 'snake',
+  '🙈': 'monkey',
+  '👑': 'king/queen',
+  '🧙': 'wizard',
+  '🧛': 'vampire',
+  '🦸': 'superhero',
+  '🕵️': 'detective',
+  '👮': 'police officer',
+  '👨‍🍳': 'chef',
+  '👩‍🎤': 'rock star',
+  '👨‍🚀': 'astronaut',
+  '👰': 'bride',
+  '🤡': 'clown',
+  '💪': 'strong',
+  '🤸': 'gymnast',
+  '🧘': 'meditation/yoga',
+  '🚿': 'shower',
+  '🛏️': 'bed/sleep',
+  '🏆': 'trophy',
+  '🎉': 'celebration'
+};
+
 
 const gameRooms = {}; // gameCode => { players: [], status, currentEmoji, ... }
 
@@ -104,7 +165,7 @@ io.on('connection', (socket) => {
     const room = gameRooms[gameCode];
     if (!room) return;
 
-    const emoji = room.currentEmoji;
+    const emoji = EMOJI_NAMES[room.currentEmoji]
     const player = room.players.find(p => p.id === socket.id);
 
     console.log(`📝 ${player?.name} guessed: ${guess} | Actual: ${emoji}`);
