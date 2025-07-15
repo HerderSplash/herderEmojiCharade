@@ -43,7 +43,7 @@ io.on('connection', (socket) => {
   
   // Listen for guesses from players
   socket.on('guess', (guess) => {
-    console.log(`Player ${player.name} guessed: ${guess}`)
+    console.log(`Player ${player.name} guessed: ${guess}`);
     
     if (guess === currentEmoji) {
       // Player guessed correctly
