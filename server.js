@@ -15,7 +15,7 @@ const io = socketIo(server, {
 
 app.use(cors());
 
-const EMOJIS = [ '🍕', '🚗', '🐱', '🏖️', '🎉', '🤖', '💻', '🎤', '🛏️', '🎮', '👑', '🍎' ];
+const EMOJIS = ['🍕', '🚗', '🐱', '🏖️', '🎉', '🤖', '💻', '🎤', '🛏️', '🎮', '👑', '🍎'];
 
 const gameRooms = {}; // gameCode => { players: [], status, currentEmoji, ... }
 
@@ -24,9 +24,11 @@ function generateEmoji() {
 }
 
 io.on('connection', (socket) => {
-  console.log(`Socket connected: ${socket.id}`);
+  console.log(`✅ Socket connected: ${socket.id}`);
 
   socket.on('create-game', ({ gameCode, playerName }) => {
+    console.log(`🎮 Creating game: ${gameCode} by ${playerName}`);
+    
     const player = {
       id: socket.id,
       name: playerName,
@@ -46,12 +48,14 @@ io.on('connection', (socket) => {
 
     socket.join(gameCode);
     socket.emit('game-joined', { gameCode, player, gameRoom: gameRooms[gameCode] });
-    console.log(`Game created: ${gameCode}`);
   });
 
   socket.on('join-game', ({ gameCode, playerName }) => {
+    console.log(`👤 Player ${playerName} attempting to join game: ${gameCode}`);
+    
     const room = gameRooms[gameCode];
     if (!room) {
+      console.warn(`⚠️ Game not found: ${gameCode}`);
       socket.emit('error', { message: 'Game not found' });
       return;
     }
@@ -66,6 +70,8 @@ io.on('connection', (socket) => {
 
     room.players.push(player);
     socket.join(gameCode);
+
+    console.log(`✅ ${playerName} joined game ${gameCode}`);
     io.to(gameCode).emit('player-joined', { players: room.players });
 
     socket.emit('game-joined', { gameCode, player, gameRoom: room });
@@ -78,6 +84,7 @@ io.on('connection', (socket) => {
     const player = room.players.find(p => p.id === socket.id);
     if (player) {
       player.isReady = isReady;
+      console.log(`🎯 ${player.name} is ${isReady ? 'READY' : 'NOT READY'}`);
       io.to(gameCode).emit('player-ready', { players: room.players });
     }
   });
@@ -89,6 +96,7 @@ io.on('connection', (socket) => {
     room.status = 'playing';
     room.currentRound = 1;
 
+    console.log(`🚀 Game started: ${gameCode}`);
     startNewRound(gameCode);
   });
 
@@ -97,23 +105,28 @@ io.on('connection', (socket) => {
     if (!room) return;
 
     const emoji = room.currentEmoji;
-    if (guess === emoji) {
-      const player = room.players.find(p => p.id === socket.id);
-      if (player) {
-        player.score += 1;
-        io.to(gameCode).emit('correct-guess', {
-          player: player.name,
-          emoji,
-        });
+    const player = room.players.find(p => p.id === socket.id);
 
-        if (room.currentRound < room.totalRounds) {
-          room.currentRound++;
-          io.to(gameCode).emit('round-transition', { nextRound: room.currentRound });
-          setTimeout(() => startNewRound(gameCode), 2000);
-        } else {
-          io.to(gameCode).emit('game-ended', { players: room.players });
-          room.status = 'finished';
-        }
+    console.log(`📝 ${player?.name} guessed: ${guess} | Actual: ${emoji}`);
+
+    if (guess === emoji && player) {
+      player.score += 1;
+      console.log(`🎉 Correct guess by ${player.name}! Score: ${player.score}`);
+
+      io.to(gameCode).emit('correct-guess', {
+        player: player.name,
+        emoji,
+      });
+
+      if (room.currentRound < room.totalRounds) {
+        room.currentRound++;
+        console.log(`➡️ Advancing to round ${room.currentRound}`);
+        io.to(gameCode).emit('round-transition', { nextRound: room.currentRound });
+        setTimeout(() => startNewRound(gameCode), 2000);
+      } else {
+        console.log(`🏁 Game over: ${gameCode}`);
+        io.to(gameCode).emit('game-ended', { players: room.players });
+        room.status = 'finished';
       }
     }
   });
@@ -121,6 +134,8 @@ io.on('connection', (socket) => {
   socket.on('skip-round', ({ gameCode }) => {
     const room = gameRooms[gameCode];
     if (!room) return;
+
+    console.log(`⏭️ Round skipped in game ${gameCode}`);
 
     if (room.currentRound < room.totalRounds) {
       room.currentRound++;
@@ -133,15 +148,19 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    console.log(`Socket disconnected: ${socket.id}`);
+    console.log(`❌ Socket disconnected: ${socket.id}`);
 
     for (const [gameCode, room] of Object.entries(gameRooms)) {
       const index = room.players.findIndex(p => p.id === socket.id);
       if (index !== -1) {
+        const playerName = room.players[index].name;
         room.players.splice(index, 1);
+        console.log(`👋 ${playerName} left game ${gameCode}`);
+
         io.to(gameCode).emit('player-left', { players: room.players });
         if (room.players.length === 0) {
-          delete gameRooms[gameCode]; // Clean up empty room
+          console.log(`🗑️ Removing empty game room: ${gameCode}`);
+          delete gameRooms[gameCode];
         }
         break;
       }
@@ -159,16 +178,18 @@ function startNewRound(gameCode) {
   room.currentEmoji = generateEmoji();
   room.currentActorId = actor.id;
 
+  console.log(`🎭 Round ${room.currentRound} - Actor: ${actor.name} - Emoji: ${room.currentEmoji}`);
+
   io.to(gameCode).emit('round-started', {
     round: room.currentRound,
     actorId: actor.id,
     emoji: room.currentEmoji,
   });
 
-  // Optionally: emit emoji only to actor
+  // Only send emoji to the actor
   io.to(actor.id).emit('emoji', room.currentEmoji);
 }
 
 server.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000');
+  console.log('🌐 Server is running on http://localhost:3000');
 });
