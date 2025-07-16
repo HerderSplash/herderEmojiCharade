@@ -69,11 +69,11 @@ const EMOJI_NAMES = {
   '👮': 'police',
   '👨‍🍳': 'chef',
   '🤡': 'clown',
-  '💪': 'strong',,
+  '💪': 'strong',
   '🧘': 'yoga',
   '🚿': 'shower',
   '🛏️': 'bed',
-  '🏆': 'trophy',,
+  '🏆': 'trophy',
 
   // New entries
   '📷': 'camera',
