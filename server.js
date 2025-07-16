@@ -68,7 +68,7 @@ const EMOJI_NAMES = {
   '🧛': 'vampire',
   '🦸': 'superhero',
   '🕵️': 'detective',
-  '👮': 'police officer',
+  '👮': 'police',
   '👨‍🍳': 'chef',
   '👩‍🎤': 'rock star',
   '👨‍🚀': 'astronaut',
