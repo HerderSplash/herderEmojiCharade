@@ -16,19 +16,25 @@ const io = socketIo(server, {
 app.use(cors());
 
 const EMOJIS = [
-  '🕺', '💃', '🎤', '🎸', '🎬', '🎭', '⚽', '🏀', '🎯', '🚗', '🚴', '✈️',
+  '🕺', '💃', '🎤', '🎸', '🎭', '⚽', '🏀', '🎯', '🚗', '🚴', '✈️',
   '🏖️', '🍕', '🍔', '🍎', '🍌', '🍩', '🍦', '☕', '📱', '💻', '📚', '🎮',
   '🤖', '🐶', '🐱', '🐸', '🦄', '🦊', '🐢', '🐍', '🙈', '👑', '🧙', '🧛',
   '🦸', '🕵️', '👮', '👨‍🍳', '👩‍🎤', '👨‍🚀', '👰', '🤡', '💪', '🤸', '🧘',
-  '🚿', '🛏️', '🏆', '🎉'
+  '🚿', '🛏️', '🏆', '🎉',
+
+  // Newly added, actable and well-known
+  '📷', '🎧', '🍿', '🍣', '🍜', '🚀',
+  '🛹', '🏄', '⛷️', '🏔️', '🎆', '🌈',
+  '🐧', '🦁', '🐘', '🧟', '🦖', '🎩', '👓',
+  '🐔', '🐷', '🐴', '🐒', '🐬'
 ];
+
 
 const EMOJI_NAMES = {
   '🕺': 'dancer',
   '💃': 'dancer (female)',
   '🎤': 'singer',
   '🎸': 'guitarist',
-  '🎬': 'movie',
   '🎭': 'actor',
   '⚽': 'soccer',
   '🏀': 'basketball',
@@ -44,7 +50,7 @@ const EMOJI_NAMES = {
   '🍩': 'donut',
   '🍦': 'ice cream',
   '☕': 'coffee',
-  '📱': 'smartphone',
+  '📱': 'phone',
   '💻': 'computer',
   '📚': 'books',
   '🎮': 'video game',
@@ -70,12 +76,39 @@ const EMOJI_NAMES = {
   '🤡': 'clown',
   '💪': 'strong',
   '🤸': 'gymnast',
-  '🧘': 'meditation/yoga',
+  '🧘': 'yogi',
   '🚿': 'shower',
-  '🛏️': 'bed/sleep',
+  '🛏️': 'bed',
   '🏆': 'trophy',
-  '🎉': 'celebration'
+  '🎉': 'celebration',
+
+  // New entries
+  '📷': 'camera',
+  '🎧': 'headphones',
+  '🍿': 'popcorn',
+  '🍣': 'sushi',
+  '🍜': 'ramen',
+  '🚀': 'rocket',
+  '🛹': 'skateboard',
+  '🏄': 'surfer',
+  '⛷️': 'skier',
+  '🏔️': 'mountain',
+  '🎆': 'fireworks',
+  '🌈': 'rainbow',
+  '🐧': 'penguin',
+  '🦁': 'lion',
+  '🐘': 'elephant',
+  '🧟': 'zombie',
+  '🦖': 'dinosaur',
+  '🎩': 'top hat',
+  '👓': 'glasses',
+  '🐔': 'chicken',
+  '🐷': 'pig',
+  '🐴': 'horse',
+  '🐒': 'monkey (swinging)',
+  '🐬': 'dolphin'
 };
+
 
 
 const gameRooms = {}; // gameCode => { players: [], status, currentEmoji, ... }
