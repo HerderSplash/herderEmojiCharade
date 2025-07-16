@@ -20,15 +20,10 @@ const EMOJIS = [
   '🏖️', '🍕', '🍔', '🍎', '🍌', '🍩', '🍦', '☕', '📱', '💻', '📚', '🎮',
   '🤖', '🐶', '🐱', '🐸', '🦄', '🦊', '🐢', '🐍', '🙈', '👑', '🧙', '🧛',
   '🦸', '🕵️', '👮', '👨‍🍳', '👩‍🎤', '👨‍🚀', '👰', '🤡', '💪', '🤸', '🧘',
-  '🚿', '🛏️', '🏆', '🎉',
-
-  // Newly added, actable and well-known
-  '📷', '🎧', '🍿', '🍣', '🍜', '🚀',
-  '🛹', '🏄', '⛷️', '🏔️', '🎆', '🌈',
-  '🐧', '🦁', '🐘', '🧟', '🦖', '🎩', '👓',
-  '🐔', '🐷', '🐴', '🐒', '🐬'
+  '🚿', '🛏️', '🏆', '🎉', '📷', '🎧', '🍿', '🍣', '🍜', '🚀', '🛹', '🏄',
+  '⛷️', '🏔️', '🎆', '🌈', '🐧', '🦁', '🐘', '🧟', '🦖', '🎩', '👓', '🐔',
+  '🐷', '🐴', '🐒', '🐬'
 ];
-
 
 const EMOJI_NAMES = {
   '🎤': 'singer',
@@ -74,8 +69,6 @@ const EMOJI_NAMES = {
   '🚿': 'shower',
   '🛏️': 'bed',
   '🏆': 'trophy',
-
-  // New entries
   '📷': 'camera',
   '🎧': 'headphones',
   '🍿': 'popcorn',
@@ -102,8 +95,6 @@ const EMOJI_NAMES = {
   '🐬': 'dolphin'
 };
 
-
-
 const gameRooms = {}; // gameCode => { players: [], status, currentEmoji, ... }
 
 function generateEmoji() {
@@ -115,7 +106,7 @@ io.on('connection', (socket) => {
 
   socket.on('create-game', ({ gameCode, playerName }) => {
     console.log(`🎮 Creating game: ${gameCode} by ${playerName}`);
-    
+
     const player = {
       id: socket.id,
       name: playerName,
@@ -139,7 +130,7 @@ io.on('connection', (socket) => {
 
   socket.on('join-game', ({ gameCode, playerName }) => {
     console.log(`👤 Player ${playerName} attempting to join game: ${gameCode}`);
-    
+
     const room = gameRooms[gameCode];
     if (!room) {
       console.warn(`⚠️ Game not found: ${gameCode}`);
@@ -191,7 +182,7 @@ io.on('connection', (socket) => {
     const room = gameRooms[gameCode];
     if (!room) return;
 
-    const emoji = EMOJI_NAMES[room.currentEmoji]
+    const emoji = EMOJI_NAMES[room.currentEmoji];
     const player = room.players.find(p => p.id === socket.id);
 
     console.log(`📝 ${player?.name} guessed: ${guess} | Actual: ${emoji}`);
@@ -232,6 +223,11 @@ io.on('connection', (socket) => {
       io.to(gameCode).emit('game-ended', { players: room.players });
       room.status = 'finished';
     }
+  });
+
+  socket.on('chat-message', ({ gameCode, senderName, message }) => {
+    console.log(`💬 [${gameCode}] ${senderName}: ${message}`);
+    io.to(gameCode).emit('chat-message', { senderName, message });
   });
 
   socket.on('disconnect', () => {
