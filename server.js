@@ -31,8 +31,6 @@ const EMOJIS = [
 
 
 const EMOJI_NAMES = {
-  '🕺': 'dancer',
-  '💃': 'dancer (female)',
   '🎤': 'singer',
   '🎸': 'guitarist',
   '🎭': 'actor',
@@ -70,17 +68,12 @@ const EMOJI_NAMES = {
   '🕵️': 'detective',
   '👮': 'police',
   '👨‍🍳': 'chef',
-  '👩‍🎤': 'rock star',
-  '👨‍🚀': 'astronaut',
-  '👰': 'bride',
   '🤡': 'clown',
-  '💪': 'strong',
-  '🤸': 'gymnast',
-  '🧘': 'yogi',
+  '💪': 'strong',,
+  '🧘': 'yoga',
   '🚿': 'shower',
   '🛏️': 'bed',
-  '🏆': 'trophy',
-  '🎉': 'celebration',
+  '🏆': 'trophy',,
 
   // New entries
   '📷': 'camera',
