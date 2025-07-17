@@ -182,9 +182,7 @@ io.on('connection', (socket) => {
     const room = gameRooms[gameCode];
     if (!room) return;
 
-    const correctGuess = Array.isArray(EMOJI_NAMES[room.currentEmoji])
-      ? EMOJI_NAMES[room.currentEmoji].includes(guess.toLowerCase())
-      : EMOJI_NAMES[room.currentEmoji] === guess.toLowerCase();
+    const correctGuess = EMOJI_NAMES[room.currentEmoji].includes(guess.toLowerCase())
 
     
     const player = room.players.find(p => p.id === socket.id);
