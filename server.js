@@ -182,12 +182,10 @@ io.on('connection', (socket) => {
     const room = gameRooms[gameCode];
     if (!room) return;
 
-    const correctGuess = EMOJI_NAMES[room.currentEmoji].includes(guess.toLowerCase())
-
-    
+    const correctGuess = EMOJI_NAMES[room.currentEmoji].includes(guess.toLowerCase())    
     const player = room.players.find(p => p.id === socket.id);
 
-    console.log(`📝 ${player?.name} guessed: ${guess} | Actual: ${emoji}`);
+    console.log(`📝 ${player?.name} guessed: ${guess} | Actual: ${room.currentEmoji}`);
 
     if (correctGuess && player) {
       player.score += 1;
